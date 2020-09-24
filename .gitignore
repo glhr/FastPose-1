@@ -1,1 +1,3 @@
 __pycache__/
+
+network/weights/fastpose.pth

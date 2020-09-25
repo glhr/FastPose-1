@@ -94,7 +94,7 @@ import numpy as np
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Directory of PNG images to use for inference.')
 parser.add_argument('--input_dir',
                     default="/home/slave/Pictures/pose/pose test input",
                     help='directory of PNG images to run fastpose on')
@@ -130,6 +130,8 @@ for test_image in glob.glob(f"{args.input_dir}/*.png"):
         jl,mjl = network.post.outputChangeForm_test(joint_list.tolist())
         persons,pair,persons_withMiddlePoint,jointLength,peaks_1,peaks_2,_ = demo.utils_eval.person_group_test(jl,mjl,distance_tolerance=0.2)
         persons_forJoint = persons_jointForm(persons)
+        # print("joint list:", joint_list)
+        # print("jl:", jl)
 
     print(img_name, timer.took)
     times.append(timer.took)
@@ -155,6 +157,7 @@ for test_image in glob.glob(f"{args.input_dir}/*.png"):
                 continue
             if int(person_picture[person_idx][point_idx][4]) in [5,6,7,11,12,13,15,17]:#left
                 cv2.circle(canvas, (int(person_picture[person_idx][point_idx][0]),int(person_picture[person_idx][point_idx][1])), 5, (255,0,0), thickness=-1)
+                print(person_picture[person_idx][point_idx])
             else:
                 cv2.circle(canvas, (int(person_picture[person_idx][point_idx][0]),int(person_picture[person_idx][point_idx][1])), 5, (0,0,255), thickness=-1)
 

@@ -1,3 +1,5 @@
 __pycache__/
 
 network/weights/fastpose.pth
+
+src/pip-delete-this-directory.txt

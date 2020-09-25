@@ -1,0 +1,3 @@
+[submodule "src/torchsample"]
+	path = src/torchsample
+	url = https://github.com/ncullen93/torchsample.git

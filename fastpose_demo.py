@@ -100,10 +100,13 @@ parser.add_argument('--input_dir',
                     help='directory of PNG images to run fastpose on')
 
 args = parser.parse_args()
+scale=0.5
 
 for test_image in glob.glob(f"{args.input_dir}/*.png"):
-    img_name = test_image.split("/")[-1]
+    img_name = f'{test_image.split("/")[-1].split(".")[-2]}-{scale}.{test_image.split(".")[-1]}' if scale<1 else test_image.split("/")[-1]
     oriImg = cv2.imread(test_image) # B,G,R order
+    dim = (int(oriImg.shape[1] * scale), int(oriImg.shape[0] * scale))
+    oriImg = cv2.resize(oriImg, dim)
 
     with CodeTimer() as timer:
         shape_dst = np.min(oriImg.shape[0:2])

@@ -37,6 +37,7 @@ import network.post
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 color = []
 for i in range(0,255,80):
@@ -79,7 +80,7 @@ model_dict = model.state_dict()
 model_dict.update(new_state_dict)
 model.load_state_dict(model_dict)
 
-model.cuda()
+model.to(device)
 model.float()
 model.eval()
 
@@ -90,7 +91,11 @@ times = []
 
 import glob
 from vision_utils.timing import CodeTimer
+from vision_utils.logger import get_logger
+logger = get_logger()
+import glob
 import numpy as np
+import json
 
 import argparse
 
@@ -152,7 +157,17 @@ for test_image in glob.glob(f"{args.input_dir}/*.png"):
 
     plt.figure(figsize=(10,10))
     canvas = oriImg.copy()
+    json_out = []
     for person_idx in range(len(person_picture)):
+
+        keypoints.extend([
+            person_picture[person_idx][point_idx][0],
+            person_picture[person_idx][point_idx][1],
+            person_picture[person_idx][point_idx][3],
+        ])
+        logger.debug(keypoints)
+        json_out.append({'keypoints':keypoints})
+
         if len(persons[person_idx])<=3:
             continue
         for point_idx in range(len(person_picture[person_idx])):
@@ -175,6 +190,11 @@ for test_image in glob.glob(f"{args.input_dir}/*.png"):
                         cv2.line(canvas,(int(pt1[0]),int(pt1[1])),(int(pt2[0]),int(pt2[1])),(0,0,255),3 )
                 else:
                     cv2.line(canvas,(int(pt1[0]),int(pt1[1])),(int(pt2[0]),int(pt2[1])),(255,0,0),3 )
+
+    json_out_name = '../eval/fastpose-zexinchen/' + img_name + '.predictions.json'
+    with open(json_out_name, 'w') as f:
+        json.dump(json_out, f)
+    logger.info(json_out_name)
     # plt.imshow(canvas)
     # plt.show()
     # plt.close()

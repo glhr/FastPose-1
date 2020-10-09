@@ -160,24 +160,28 @@ for test_image in glob.glob(f"{args.input_dir}/*.png"):
     json_out = []
     for person_idx in range(len(person_picture)):
 
-        keypoints.extend([
-            person_picture[person_idx][point_idx][0],
-            person_picture[person_idx][point_idx][1],
-            person_picture[person_idx][point_idx][3],
-        ])
-        logger.debug(keypoints)
-        json_out.append({'keypoints':keypoints})
+        keypoints = []
+
 
         if len(persons[person_idx])<=3:
             continue
         for point_idx in range(len(person_picture[person_idx])):
             if len(person_picture[person_idx][point_idx])==0:#int(person_picture[person_idx][point_idx][0])>260:
+                keypoints.extend([0,0,0])
                 continue
+            keypoints.extend([
+                person_picture[person_idx][point_idx][0],
+                person_picture[person_idx][point_idx][1],
+                person_picture[person_idx][point_idx][3],
+            ])
             if int(person_picture[person_idx][point_idx][4]) in [5,6,7,11,12,13,15,17]:#left
                 cv2.circle(canvas, (int(person_picture[person_idx][point_idx][0]),int(person_picture[person_idx][point_idx][1])), 5, (255,0,0), thickness=-1)
                 print(person_picture[person_idx][point_idx])
             else:
                 cv2.circle(canvas, (int(person_picture[person_idx][point_idx][0]),int(person_picture[person_idx][point_idx][1])), 5, (0,0,255), thickness=-1)
+
+        logger.debug(keypoints)
+        json_out.append({'keypoints':keypoints})
 
         for key in coco_middle:
             jl = (key.split('--'))
